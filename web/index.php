@@ -10,9 +10,9 @@ $app = require __DIR__.'/../app/app.php';
 $app->register(new GB\MainBundle\Provider\SmartyServiceProvider(), array(
           'smarty.dir' => SMARTY_PATH,
           'smarty.options' => array(
-                'template_dir' => SMARTY_PATH . '/demo/templates',
-                'compile_dir' => SMARTY_PATH . '/demo/templates_c',
-                'config_dir' => SMARTY_PATH . '/demo/configs',
-                'cache_dir' => SMARTY_PATH . '/demo/cache',),));
+                'template_dir' => __DIR__.'/../src/GB/MainBundle/Resource/smarty/templates',
+                'compile_dir' => __DIR__.'/../src/GB/MainBundle/Resource/smarty/templates_c',
+                'config_dir' => __DIR__.'/../src/GB/MainBundle/Resource/smarty/configs',
+                'cache_dir' => __DIR__.'/../src/GB/MainBundle/Resource/smarty/cache',),));
 
 $app->run(); 

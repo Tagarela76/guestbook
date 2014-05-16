@@ -19,15 +19,21 @@ namespace GB\MainBundle\Controller {
         }
 
         public function index(Application $app)
-        {
-            return $app['smarty']->display('hello.tpl', array(
-                        'name' => $name,
-            ));
+        {   
+            $tpl =  'main.tpl';
+            $cssSource = array(
+                ''
+            );
+            $app['smarty']->assign('tpl', $tpl);
+            $app['smarty']->assign('title', 'guestbook');
+            return $app['smarty']->fetch('index.tpl', array());
+           
         }
 
         public function homepage(Application $app)
         {
-            die('alala');
+            
+            return 'alala';
         }
 
     }

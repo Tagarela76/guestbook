@@ -35,7 +35,7 @@ class SmartyServiceProvider implements ServiceProviderInterface
                 if (isset($app['smarty.configure'])) {
                     $app['smarty.configure']($smarty);
                 }
-
+                
                 return $smarty;
         });
     }
