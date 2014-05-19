@@ -16,14 +16,35 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Silex\Application;
 use Silex\Provider\DoctrineServiceProvider;
+use \Doctrine\Common\Cache\ApcCache;
+use \Doctrine\Common\Cache\ArrayCache;
 
 $app->register(new DoctrineServiceProvider, array(
-    "db.options" => array(
-        "driver" => "pdo_sqlite",
-        "path" => "/path/to/sqlite.db",
-    ),
+    'db.options'    => array(
+    'driver'        => 'pdo_mysql',
+    'host'          => 'localhost',
+    'dbname'        => 'name',
+    'user'          => 'root',
+    'password'      => 'developer',
+    'charset'       => 'utf8',
+    'driverOptions' => array(1002 => 'SET NAMES utf8',),
+  ),
+
 ));
 
+// Register Doctrine ORM
+/*$app->register(new DoctrineOrmServiceProvider, array(
+    'db.orm.proxies_dir'           => __DIR__ . '/cache/doctrine/proxy',
+    'db.orm.proxies_namespace'     => 'DoctrineProxy',
+    'db.orm.cache'                 => 
+        !$app['debug'] && extension_loaded('apc') ? new ApcCache() : new ArrayCache(),
+    'db.orm.auto_generate_proxies' => true,
+    'db.orm.entities'              => array(array(
+        'type'      => 'annotation',       // entity definition 
+        'path'      => __DIR__ . '/src/GB/MainBundle/Entity',   // path to your entity classes
+        'namespace' => 'GB\MainBundle\Entity', // your classes namespace
+    )),
+));*/
 $app->register(new DoctrineOrmServiceProvider, array(
     "orm.proxies_dir" => "/path/to/proxies",
     "orm.em.options" => array(
@@ -31,26 +52,13 @@ $app->register(new DoctrineOrmServiceProvider, array(
             // Using actual filesystem paths
             array(
                 "type" => "annotation",
-                "namespace" => "Foo\Entities",
-                "path" => __DIR__."/src/Foo/Entities",
+                "namespace" => "GB\MainBundle\Entity",
+                "path" => __DIR__."\src\GB\MainBundle\Entity",
             ),
             array(
                 "type" => "xml",
-                "namespace" => "Bat\Entities",
+                "namespace" => "GB\MainBundle\Entity",
                 "path" => __DIR__."/src/Bat/Resources/mappings",
-            ),
-            // Using PSR-0 namespaceish embedded resources
-            // (requires registering a PSR-0 Resource Locator
-            // Service Provider)
-            array(
-                "type" => "annotation",
-                "namespace" => "Baz\Entities",
-                "resources_namespace" => "Baz\Entities",
-            ),
-            array(
-                "type" => "xml",
-                "namespace" => "Bar\Entities",
-                "resources_namespace" => "Bar\Resources\mappings",
             ),
         ),
     ),
