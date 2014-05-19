@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2014-05-16 17:10:50
+<?php /* Smarty version Smarty-3.1.18, created on 2014-05-19 09:49:16
          compiled from "/home/developer/WorkSpace/guestbook/src/GB/MainBundle/Resource/smarty/templates/index.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:89335193353760d6c6db0b7-98171793%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'fa28690c6d31f03aa52d5685f8e80e2b7aa5d17c' => 
     array (
       0 => '/home/developer/WorkSpace/guestbook/src/GB/MainBundle/Resource/smarty/templates/index.tpl',
-      1 => 1400249446,
+      1 => 1400482149,
       2 => 'file',
     ),
   ),
@@ -37,7 +37,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 foreach ($_from as $_smarty_tpl->tpl_vars['jsSource']->key => $_smarty_tpl->tpl_vars['jsSource']->value) {
 $_smarty_tpl->tpl_vars['jsSource']->_loop = true;
 ?>
-            <script type="text/javascript" src="<?php echo $_smarty_tpl->tpl_vars['jsSource']->value;?>
+            <script type="text/javascript" src="../src/GB/MainBundle/Resource/js/<?php echo $_smarty_tpl->tpl_vars['jsSource']->value;?>
 "></script>
         <?php } ?>
 
@@ -46,7 +46,7 @@ $_smarty_tpl->tpl_vars['jsSource']->_loop = true;
 foreach ($_from as $_smarty_tpl->tpl_vars['cssSource']->key => $_smarty_tpl->tpl_vars['cssSource']->value) {
 $_smarty_tpl->tpl_vars['cssSource']->_loop = true;
 ?>
-            <link href="<?php echo $_smarty_tpl->tpl_vars['cssSource']->value;?>
+            <link href="../src/GB/MainBundle/Resource/css/<?php echo $_smarty_tpl->tpl_vars['cssSource']->value;?>
 " rel="stylesheet" type="text/css"/>
         <?php } ?>
     </head>

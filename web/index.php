@@ -1,11 +1,11 @@
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php'; 
-
+require_once __DIR__.'/../vendor/autoload.php';
 /*use FractalizeR\Smarty\ServiceProvider as SmartyServiceProvider;*/
 define('SMARTY_PATH', __DIR__ . '/../vendor/smarty/smarty');
 
 $app = require __DIR__.'/../app/app.php';
+require_once __DIR__.'/../app/config/dev.php';
 
 $app->register(new GB\MainBundle\Provider\SmartyServiceProvider(), array(
           'smarty.dir' => SMARTY_PATH,

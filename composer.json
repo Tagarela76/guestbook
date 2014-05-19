@@ -21,7 +21,9 @@
         "php":">=5.3.0",
         "silex/silex": "~1.2",
         "smarty/smarty": "3.1.18",
-        "doctrine/dbal": "2.2.*"
+        "cilex/cilex": "1.*@dev",
+        "cilex/console-service-provider": "@dev",
+        "dflydev/doctrine-orm-service-provider": "1.0.*@dev"
     },
    "minimum-stability": "dev",
     "autoload": { "psr-0": { "GB": "src/" } }
