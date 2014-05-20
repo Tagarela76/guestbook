@@ -74,7 +74,8 @@ namespace GB\MainBundle\Controller {
             $messageDialogHomePage = $app['request']->get('messageDialogHomePage');
             $messageDialogUserName = $app['request']->get('messageDialogUserName');
             
-            
+            $em = $app['orm.em'];
+            var_dump($em);
             return $messageDialogText;
         }
 

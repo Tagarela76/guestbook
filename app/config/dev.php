@@ -55,11 +55,6 @@ $app->register(new DoctrineOrmServiceProvider, array(
                 "namespace" => "GB\MainBundle\Entity",
                 "path" => __DIR__."\src\GB\MainBundle\Entity",
             ),
-            array(
-                "type" => "xml",
-                "namespace" => "GB\MainBundle\Entity",
-                "path" => __DIR__."/src/Bat/Resources/mappings",
-            ),
         ),
     ),
 ));
