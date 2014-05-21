@@ -2,6 +2,8 @@
 
 namespace GB\MainBundle\Controller {
 
+    use GB\MainBundle\Entity\Message;
+    use GB\MainBundle\Model\MessageManager;
     use Silex\Application;
     use Silex\Route;
     use Silex\ControllerProviderInterface;
@@ -22,10 +24,24 @@ namespace GB\MainBundle\Controller {
 
         public function index(Application $app)
         {
+            $manager = new MessageManager($app['db.orm.em']);
+
+            //set Pagination
+            //get current page
+            $currentPage = $app['request']->get('page');
+            //get message count
+            $count = $manager->getMessageCount();
+            //create pagination
+            $pagination = $app['pagination']($count, $currentPage, PAGINATION_ITEM);
+            $pages = $pagination->build();
+
+            //get sort condition
+            $sortCondition = $app['request']->get('sort');
+            //get order
+            $order = $app['request']->get('order');
+            $messageArray = $manager->findAll($pagination, $sortCondition, $order);
+
             $tpl = 'main.tpl';
-            $cssSource = array(
-                ''
-            );
             //include js
             $jsSources = array(
                 'jquery-1.4.2.min.js',
@@ -35,14 +51,23 @@ namespace GB\MainBundle\Controller {
 
             $cssSources = array(
                 'bootstrap.css',
-                'jquery-ui-1.8.2.custom.css'
+                'jquery-ui-1.8.2.custom.css',
+                'main.css'
             );
             //assign variables to smarty
             $app['smarty']->assign('tpl', $tpl);
             $app['smarty']->assign('jsSources', $jsSources);
             $app['smarty']->assign('cssSources', $cssSources);
             $app['smarty']->assign('title', 'guestbook');
+            $app['smarty']->assign('messageArray', $messageArray);
+            $app['smarty']->assign('pages', $pages);
+            $app['smarty']->assign('currentPage', $currentPage);
 
+            if($order == 'ASC'){
+                $app['smarty']->assign('order', 'DESC');
+            }else{
+                $app['smarty']->assign('order', 'ASC');
+            }
             return $app['smarty']->fetch('index.tpl', array());
         }
 
@@ -73,10 +98,34 @@ namespace GB\MainBundle\Controller {
             $messageDialogEmail = $app['request']->get('messageDialogEmail');
             $messageDialogHomePage = $app['request']->get('messageDialogHomePage');
             $messageDialogUserName = $app['request']->get('messageDialogUserName');
-            
-            $em = $app['orm.em'];
-            var_dump($em);
-            return $messageDialogText;
+
+            //create message
+            $message = new Message();
+            $message->setEmail($messageDialogEmail);
+            $message->setUserName($messageDialogUserName);
+            $message->setHomePage($messageDialogHomePage);
+            $message->setText($messageDialogText);
+            $message->setCreationDate(time());
+
+            //validate message
+            $errors = $app['validator']->validate($message);
+            $validateErrors = array();
+            $responce = array(
+                'messageId' => false,
+                'validateErrors' => false
+            );
+            if (count($errors) > 0) {
+                foreach ($errors as $error) {
+                    $validateErrors[$error->getPropertyPath()] = $error->getMessage();
+                }
+                $responce['validateErrors'] = $validateErrors;
+            }else{
+                //save message
+                $manager = new MessageManager($app['db.orm.em']);
+                $messageId = $manager->saveMessage($message);
+                $responce['messageId'] = $messageId;
+            }
+            return json_encode($responce);
         }
 
     }

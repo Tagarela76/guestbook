@@ -12,8 +12,8 @@ function MessageDialog()
 
 		var that = this;
 		$("#"+divId).dialog({
-			width: 250,
-			height: 300,
+			width: 400,
+			height: 350,
 			autoOpen: false,
 			resizable: true,
 			dragable: true,
@@ -68,11 +68,46 @@ function MessageDialog()
                 messageDialogEmail: that.messageDialogEmail
             },
 			type: "GET",
-			dataType: "html",
-			success: function (response) {
-				console.log(response);
-				$("#"+that.divId).dialog('close'); 
-				that.divId.isLoaded = false;
+			dataType: "json",
+			success: function (response) {console.log(response);
+				if(response.messageId != false){
+                    //Saving was successful
+                    //add new message on display
+                    var html = '';
+
+                    html+='<tr>';
+                    html+=  '<td>';
+                    html+=      response.messageId;
+                    html+=  '</td>';
+                    html+=  '<td>';
+                    html+=      that.messageDialogUserName;
+                    html+=  '</td>'
+                    html+=  '<td>';
+                    html+=      that.messageDialogEmail;
+                    html+=  '</td>'
+                    html+=  '<td>';
+                    html+=      that.messageDialogHomePage;
+                    html+=  '</td>'
+                    html+=  '<td>';
+                    html+=      that.messageDialogText;
+                    html+=  '</td>'
+                    html+='</tr>';
+
+                    $('#messageTable tbody tr:first').after(html);
+				    $("#"+that.divId).dialog('close');
+				    that.divId.isLoaded = false;
+                }else{
+                    //delete old errors
+                    $('#userNameError').html();
+                    $('#emailError').html();
+                    $('#homePageError').html();
+                    $('#textError').html();
+                    //show validation errors
+                    $('#userNameError').html(response.validateErrors.userName);
+                    $('#emailError').html(response.validateErrors.email);
+                    $('#homePageError').html(response.validateErrors.homePage);
+                    $('#textError').html(response.validateErrors.text);
+                }
 			}
 		});
 	}

@@ -1,0 +1,19 @@
+<?php
+
+namespace GB\MainBundle\Entity {
+
+    use Doctrine\ORM\Mapping as ORM;
+    /**
+     * @\Doctrine\ORM\Mapping\Entity
+     */
+    class Message
+    {
+        /**
+         * @\Doctrine\ORM\Mapping\Id
+         * @\Doctrine\ORM\Mapping\Column(type="integer")
+         * @\Doctrine\ORM\Mapping\GeneratedValue
+         */
+        private $id;
+
+    }
+}
