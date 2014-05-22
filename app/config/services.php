@@ -11,7 +11,7 @@ $app->register(new DoctrineServiceProvider, array(
     'host'          => 'localhost',
     'dbname'        => 'guestbook',
     'user'          => 'root',
-    'password'      => '',
+    'password'      => 'developer',
     'charset'       => 'utf8',
     'driverOptions' => array(1002 => 'SET NAMES utf8',),
   ),
@@ -45,7 +45,9 @@ $app->register(new GB\MainBundle\Provider\SmartyServiceProvider(), array(
         'compile_dir' => __DIR__.'/../../src/GB/MainBundle/Resource/smarty/templates_c',
         'config_dir' => __DIR__.'/../../src/GB/MainBundle/Resource/smarty/configs',
         'cache_dir' => __DIR__.'/../../src/GB/MainBundle/Resource/smarty/cache',),));
-
+//validator Provider
 $app->register(new Silex\Provider\ValidatorServiceProvider());
-
-$app->register(new \Kilte\Silex\Pagination\PaginationServiceProvider);
+//pagination Provider
+$app->register(new \Kilte\Silex\Pagination\PaginationServiceProvider());
+//Form Provider
+$app->register(new \Silex\Provider\FormServiceProvider());

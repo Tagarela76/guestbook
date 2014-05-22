@@ -1,3 +1,11 @@
 .validation-error{
 color: #A11515;
 }
+
+.message-dialog-text{
+    width: 600px;
+    height: 200px;
+}
+.container{
+    margin-top: 20px;
+}

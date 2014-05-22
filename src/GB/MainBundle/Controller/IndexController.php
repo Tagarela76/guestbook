@@ -4,6 +4,8 @@ namespace GB\MainBundle\Controller {
 
     use GB\MainBundle\Entity\Message;
     use GB\MainBundle\Model\MessageManager;
+    use Symfony\Component\HttpFoundation\Request;
+    use Symfony\Component\HttpFoundation\Response;
     use Silex\Application;
     use Silex\Route;
     use Silex\ControllerProviderInterface;
@@ -19,6 +21,8 @@ namespace GB\MainBundle\Controller {
             $indexController->get("/homepage", array($this, 'homepage'))->bind('homepage');
             $indexController->get("/getMessageDialogContent", array($this, 'getMessageDialogContent'))->bind('getMessageDialogContent');
             $indexController->get("/saveMessage", array($this, 'saveMessage'))->bind('saveMessage');
+            $indexController->post("/addFileToMessage", array($this, 'addFileToMessage'))->bind('addFileToMessage');
+            
             return $indexController;
         }
 
@@ -126,6 +130,13 @@ namespace GB\MainBundle\Controller {
                 $responce['messageId'] = $messageId;
             }
             return json_encode($responce);
+        }
+        
+        public function addFileToMessage()
+        {
+           // $files = $app['request']->files->get('fileUpload');
+            var_dump($_REQUEST);die();
+            return ($_POST);
         }
 
     }
