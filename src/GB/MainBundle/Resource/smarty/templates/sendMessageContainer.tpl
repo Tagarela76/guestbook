@@ -1,3 +1,5 @@
+<script src='../src/GB/MainBundle/Resource/js/jquery.MultiFile.js' type="text/javascript" language="javascript"></script>
+
 <div>
     <div class="container">
         <input type='text' value="" placeholder="User Name" id='messageDialogUserName'>
@@ -20,19 +22,9 @@
         <div id="textError" class="validation-error"></div>
     </div>
     <div>
-        <form id="data" action="" enctype="multipart/form-data">
-            <fieldset>
-                <legend>File Upload</legend>
-                <input type="file" id="form_FileUpload" name="form[FileUpload]" required="required">
-            </fieldset>
-            <input type="submit" name="Upload File"/>
+        <form action="#" enctype="multipart/form-data" method="post" id="ololo">
+            <label for="file_upload">File:</label>
+            <input type="file" name="file_upload" id="file_upload" multiple class="multi">
         </form>
     </div>
 </div>
-<script>
-         $("form#data").submit(function() {
-             messageManagerPage.messageFile.addFileToMessage();
-             //not refresh page
-             return false;
-        });
-</script>

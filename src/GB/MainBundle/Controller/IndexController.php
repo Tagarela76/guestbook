@@ -18,9 +18,8 @@ namespace GB\MainBundle\Controller {
         {
             $indexController = $app['controllers_factory'];
             $indexController->get("/", array($this, 'index'))->bind('index');
-            $indexController->get("/homepage", array($this, 'homepage'))->bind('homepage');
             $indexController->get("/getMessageDialogContent", array($this, 'getMessageDialogContent'))->bind('getMessageDialogContent');
-            $indexController->get("/saveMessage", array($this, 'saveMessage'))->bind('saveMessage');
+            $indexController->post("/saveMessage", array($this, 'saveMessage'))->bind('saveMessage');
             $indexController->post("/addFileToMessage", array($this, 'addFileToMessage'))->bind('addFileToMessage');
             
             return $indexController;
@@ -129,6 +128,20 @@ namespace GB\MainBundle\Controller {
                 $messageId = $manager->saveMessage($message);
                 $responce['messageId'] = $messageId;
             }
+
+            $uploaddir = __DIR__.'/uploads/';
+            foreach($_FILES as $file)
+            {
+                if(move_uploaded_file($file['tmp_name'], $uploaddir .basename($file['name'])))
+                {
+                    $files[] = $uploaddir .$file['name'];
+                }
+                else
+                {
+                    $error = true;
+                }
+            }
+
             return json_encode($responce);
         }
         

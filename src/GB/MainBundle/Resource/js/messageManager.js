@@ -11,7 +11,7 @@ function MessageDialog()
         }
 
         var that = this;
-        $("#" + divId).dialog({
+        jQuery("#" + divId).dialog({
             width: 750,
             height: 650,
             autoOpen: false,
@@ -20,7 +20,7 @@ function MessageDialog()
             modal: true,
             buttons: {
                 'Cancel': function() {
-                    $(this).dialog('close');
+                    jQuery(this).dialog('close');
                     that.isLoaded = false;
                 },
                 'Save': function() {
@@ -34,7 +34,7 @@ function MessageDialog()
     }
 
     this.openDialog = function() {
-        $('#' + this.divId).dialog('open');
+        jQuery('#' + this.divId).dialog('open');
         if (!this.isLoaded) {
             this.loadContent();
         }
@@ -49,7 +49,7 @@ function MessageDialog()
             type: "GET",
             dataType: "html",
             success: function(response) {
-                $("#" + that.divId).html(response);
+                jQuery("#" + that.divId).html(response);
                 that.isLoaded = true;
             }
         });
@@ -61,19 +61,53 @@ function MessageDialog()
         this.messageDialogHomePage = $('#messageDialogHomePage').val();
         this.messageDialogText = $('#messageDialogText').val();
         var that = this;
+        var fileSelect = $('#file_upload')[0];
+        //console.log(fileSelect);
+        var files = fileSelect.files;
+
+    var files = [];
+        var filesList = $('input[type=file]');
+        console.log(filesList[0]);
+        for(var i=0;i < filesList.length-1; i++){
+            files=files.concat(filesList[i].files[0]);
+
+        }
+
+        console.log(files);
+
+        var data = new FormData();
+        /*for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+
+            // Check the file type.
+            if (!file.type.match('image.*')) {
+                continue;
+            }
+
+            // Add the file to the request.
+            data.append('image[]', file, file.name);
+        }*/
+        for (var i = 0; i < files.length; i++) {
+            $.each(files[i], function(key, value)
+            {
+                data.append(key, value);
+            });
+            data.append('image[]', file, file.name);
+        }
+        data.append('messageDialogText', this.messageDialogText);
+        data.append('messageDialogHomePage', this.messageDialogHomePage);
+        data.append('messageDialogUserName', this.messageDialogUserName);
+        data.append('messageDialogEmail', this.messageDialogEmail);
 
         $.ajax({
             url: "index.php/saveMessage",
-            data: {
-                messageDialogText: that.messageDialogText,
-                messageDialogHomePage: that.messageDialogHomePage,
-                messageDialogUserName: that.messageDialogUserName,
-                messageDialogEmail: that.messageDialogEmail
-            },
-            type: "GET",
-            dataType: "json",
+            data: data,
+            type: "POST",
+            cache: false,
+            dataType: 'json',
+            processData: false, // Don't process the files
+            contentType: false, // Set content type to false as jQuery will tell the server its a query string request
             success: function(response) {
-                console.log(response);
                 if (response.messageId != false) {
                     //Saving was successful
                     //add new message on display
@@ -98,7 +132,7 @@ function MessageDialog()
                     html += '</tr>';
 
                     $('#messageTable tbody tr:first').after(html);
-                    $("#" + that.divId).dialog('close');
+                    jQuery("#" + that.divId).dialog('close');
                     that.divId.isLoaded = false;
                 } else {
                     //delete old errors
@@ -117,34 +151,9 @@ function MessageDialog()
     }
 }
 
-function MessageFile()
-{
-    this.addFileToMessage = function()
-    {
-            var formData = new FormData($('#messageImage'));
-             
-            console.log(formData);
-            $.ajax({
-                url: 'index.php/addFileToMessage',
-                type: 'POST',
-                data: formData,
-                async: false,
-                processData: false,
-                success: function(data) {
-                    console.log(data)
-                },
-                cache: false,
-                contentType: false,
-                processData: false
-            });
 
-            return false;
-        
-    }
-}
 function MessageManagerPage() {
     this.messageDialog = new MessageDialog();
-    this.messageFile = new MessageFile();
 }
 
 //	global object
