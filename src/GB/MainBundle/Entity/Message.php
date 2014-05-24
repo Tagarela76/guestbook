@@ -5,6 +5,8 @@ namespace GB\MainBundle\Entity {
     use Doctrine\ORM\Mapping as ORM;
     use Symfony\Component\Validator\Mapping\ClassMetadata;
     use Symfony\Component\Validator\Constraints as Assert;
+    use GB\MainBundle\Model\MessageManager;
+    use Silex\Application;
 
     /**
      * @\Doctrine\ORM\Mapping\Entity(repositoryClass="GB\MainBundle\Repository\MessageEntityRepository")
@@ -169,7 +171,7 @@ namespace GB\MainBundle\Entity {
 
             $metadata->addPropertyConstraint('email', new Assert\Email());
             $metadata->addPropertyConstraint('email', new Assert\NotBlank());
-
+            $metadata->addPropertyConstraint('email', new Unique(array('field' => 'email')));
         }
     }
 }

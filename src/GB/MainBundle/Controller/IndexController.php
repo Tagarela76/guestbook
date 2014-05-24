@@ -4,6 +4,8 @@ namespace GB\MainBundle\Controller {
 
     use GB\MainBundle\Entity\Message;
     use GB\MainBundle\Model\MessageManager;
+    use GB\MainBundle\Model\ImageManager;
+    use \GB\MainBundle\Entity\Image;
     use Symfony\Component\HttpFoundation\Request;
     use Symfony\Component\HttpFoundation\Response;
     use Silex\Application;
@@ -21,14 +23,13 @@ namespace GB\MainBundle\Controller {
             $indexController->get("/getMessageDialogContent", array($this, 'getMessageDialogContent'))->bind('getMessageDialogContent');
             $indexController->post("/saveMessage", array($this, 'saveMessage'))->bind('saveMessage');
             $indexController->post("/addFileToMessage", array($this, 'addFileToMessage'))->bind('addFileToMessage');
-            
+            $indexController->get("/Preview", array($this, 'Preview'))->bind('Preview');
             return $indexController;
         }
 
         public function index(Application $app)
         {
             $manager = new MessageManager($app['db.orm.em']);
-
             //set Pagination
             //get current page
             $currentPage = $app['request']->get('page');
@@ -109,7 +110,6 @@ namespace GB\MainBundle\Controller {
             $message->setHomePage($messageDialogHomePage);
             $message->setText($messageDialogText);
             $message->setCreationDate(time());
-
             //validate message
             $errors = $app['validator']->validate($message);
             $validateErrors = array();
@@ -127,29 +127,46 @@ namespace GB\MainBundle\Controller {
                 $manager = new MessageManager($app['db.orm.em']);
                 $messageId = $manager->saveMessage($message);
                 $responce['messageId'] = $messageId;
-            }
 
-            $uploaddir = __DIR__.'/uploads/';
-            foreach($_FILES as $file)
-            {
-                if(move_uploaded_file($file['tmp_name'], $uploaddir .basename($file['name'])))
+                //save image
+                $uploaddir = UPLOADS_PATH;
+                foreach($_FILES as $file)
                 {
-                    $files[] = $uploaddir .$file['name'];
-                }
-                else
-                {
-                    $error = true;
+                    $info = pathinfo($file['name']);
+                    $ext = $info['extension'];
+                    $fileName = md5(basename($file['name'])).time().'.'.$ext;
+                    $imageManager = new ImageManager($app['db.orm.em']);
+                    $image = new Image();
+                    $image->setName($fileName);
+                    $image->setRealName(basename($file['name']));
+                    $image->setMessage($message);
+                    $imageManager->saveImage($image);
+                    if (!file_exists($uploaddir.'messageImage')) {
+                        mkdir($uploaddir.'messageImage', 0777, true);
+                    }
+                    if (!file_exists($uploaddir.'messageImage/'.$messageDialogEmail)) {
+                        mkdir($uploaddir.'messageImage/'.$messageDialogEmail, 0777, true);
+                    }
+                    move_uploaded_file($file['tmp_name'], $uploaddir .'messageImage/'.$messageDialogEmail.'/'.$fileName);
                 }
             }
 
             return json_encode($responce);
         }
-        
-        public function addFileToMessage()
+
+        public function Preview(Application $app)
         {
-           // $files = $app['request']->files->get('fileUpload');
-            var_dump($_REQUEST);die();
-            return ($_POST);
+            $messageDialogUserName = $app['request']->get('messageDialogUserName');
+            $messageDialogText = $app['request']->get('messageDialogText');
+            $messageDialogEmail = $app['request']->get('messageDialogEmail');
+            $messageDialogHomePage = $app['request']->get('messageDialogHomePage');
+
+            $app['smarty']->assign('messageDialogUserName', $messageDialogUserName);
+            $app['smarty']->assign('messageDialogText', $messageDialogText);
+            $app['smarty']->assign('messageDialogEmail', $messageDialogEmail);
+            $app['smarty']->assign('messageDialogHomePage', $messageDialogHomePage);
+
+            return $app['smarty']->fetch('preview.tpl');
         }
 
     }

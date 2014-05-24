@@ -2,6 +2,7 @@
 
 use Silex\Application;
 use Silex\Provider\DoctrineServiceProvider;
+
 use \Doctrine\Common\Cache\ApcCache;
 use \Doctrine\Common\Cache\ArrayCache;
 //register Doctrine Service Proviser
@@ -37,6 +38,9 @@ $app->register(new Nutwerk\Provider\DoctrineORMServiceProvider(), array(
 define('SMARTY_PATH', __DIR__ . '/../../vendor/smarty/smarty');
 //Pagination
 define('PAGINATION_ITEM', 10);
+//upload path
+//define('UPLOADS_PATH', __DIR__.'/../../uploads');
+define('UPLOADS_PATH', __DIR__.'/../../uploads/');
 
 $app->register(new GB\MainBundle\Provider\SmartyServiceProvider(), array(
     'smarty.dir' => SMARTY_PATH,
@@ -46,6 +50,12 @@ $app->register(new GB\MainBundle\Provider\SmartyServiceProvider(), array(
         'config_dir' => __DIR__.'/../../src/GB/MainBundle/Resource/smarty/configs',
         'cache_dir' => __DIR__.'/../../src/GB/MainBundle/Resource/smarty/cache',),));
 //validator Provider
+$app->register(new \GB\MainBundle\Provider\UniqueValidatorServiceProvider(), array(
+    'validator.validator_service_ids' => array(
+        'validator.unique' => 'validator.unique'
+    )
+));
 $app->register(new Silex\Provider\ValidatorServiceProvider());
 //pagination Provider
 $app->register(new \Kilte\Silex\Pagination\PaginationServiceProvider());
+

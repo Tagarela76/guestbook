@@ -30,7 +30,7 @@ class MessageEntityRepository
     public function saveMessage($message)
     {
         $this->em->persist($message);
-        $id = $this->em->flush();
+        $this->em->flush();
 
         return $message->getId();
     }
@@ -71,5 +71,14 @@ class MessageEntityRepository
         $query = $this->em->createQuery($sql);
 
         return $query->getSingleScalarResult();
+    }
+
+    public function findOneByField($field, $value)
+    {
+        $sql = "SELECT m FROM GB\MainBundle\Entity\Message m ".
+                "WHERE m.".$field." = ?1";
+        $query = $this->em->createQuery($sql)->setParameter(1, $value);
+
+        return $query->getResult();
     }
 }

@@ -22,7 +22,7 @@
         <div id="textError" class="validation-error"></div>
     </div>
     <div>
-        <form action="#" enctype="multipart/form-data" method="post" id="ololo">
+        <form action="#" enctype="multipart/form-data" method="post">
             <label for="file_upload">File:</label>
             <input type="file" name="file_upload" id="file_upload" multiple class="multi">
         </form>

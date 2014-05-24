@@ -55,99 +55,134 @@ function MessageDialog()
         });
     }
 
+    this.preview = function() {
+        this.messageDialogUserName = $('#messageDialogUserName').val();
+        this.messageDialogEmail = $('#messageDialogEmail').val();
+        this.messageDialogHomePage = $('#messageDialogHomePage').val();
+        this.messageDialogText = $('#messageDialogText').val();
+        this.url = 'index.php/Preview?messageDialogUserName='+this.messageDialogUserName
+        this.url += '&messageDialogEmail='+this.messageDialogEmail;
+        this.url += '&messageDialogHomePage='+this.messageDialogHomePage;
+        this.url += '&messageDialogText='+this.messageDialogText;
+        window.open(this.url, 'Preview', "height=400,width=600");
+    }
     this.save = function() {
         this.messageDialogUserName = $('#messageDialogUserName').val();
         this.messageDialogEmail = $('#messageDialogEmail').val();
         this.messageDialogHomePage = $('#messageDialogHomePage').val();
         this.messageDialogText = $('#messageDialogText').val();
         var that = this;
-        var fileSelect = $('#file_upload')[0];
-        //console.log(fileSelect);
-        var files = fileSelect.files;
+        var validation = true;
+        var message = '';
+        //create Form Data
+        var data = new FormData()
 
-    var files = [];
+        //get all files from document
         var filesList = $('input[type=file]');
-        console.log(filesList[0]);
+        //checkFile
         for(var i=0;i < filesList.length-1; i++){
-            files=files.concat(filesList[i].files[0]);
-
+            if(!that.validateFileType(filesList[i])){
+                //file type error
+                validation = false;
+                message += ''+filesList[i].files[0].name+' invalid file type. Allowable gif/jpeg/bmp\n';
+            };
+            if(!that.validateFileMaxSize(filesList[i])){
+                //file max size error
+                validation = false;
+                message += ''+filesList[i].files[0].name+' file size exceeded. Allowable size 1 MB\n';
+            }
         }
-
-        console.log(files);
-
-        var data = new FormData();
-        /*for (var i = 0; i < files.length; i++) {
-            var file = files[i];
-
-            // Check the file type.
-            if (!file.type.match('image.*')) {
-                continue;
+        if (validation) {
+            var files = [];
+            //set files
+            for (var i = 0; i < filesList.length - 1; i++) {
+                data.append(i, filesList[i].files[0]);
             }
 
-            // Add the file to the request.
-            data.append('image[]', file, file.name);
-        }*/
-        for (var i = 0; i < files.length; i++) {
-            $.each(files[i], function(key, value)
-            {
-                data.append(key, value);
-            });
-            data.append('image[]', file, file.name);
-        }
-        data.append('messageDialogText', this.messageDialogText);
-        data.append('messageDialogHomePage', this.messageDialogHomePage);
-        data.append('messageDialogUserName', this.messageDialogUserName);
-        data.append('messageDialogEmail', this.messageDialogEmail);
+            data.append('messageDialogText', this.messageDialogText);
+            data.append('messageDialogHomePage', this.messageDialogHomePage);
+            data.append('messageDialogUserName', this.messageDialogUserName);
+            data.append('messageDialogEmail', this.messageDialogEmail);
 
-        $.ajax({
-            url: "index.php/saveMessage",
-            data: data,
-            type: "POST",
-            cache: false,
-            dataType: 'json',
-            processData: false, // Don't process the files
-            contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-            success: function(response) {
-                if (response.messageId != false) {
-                    //Saving was successful
-                    //add new message on display
-                    var html = '';
+            $.ajax({
+                url: "index.php/saveMessage",
+                data: data,
+                type: "POST",
+                cache: false,
+                dataType: 'json',
+                processData: false, // Don't process the files
+                contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+                success: function (response) {console.log(response);
+                    if (response.messageId != false) {
+                        //Saving was successful
+                        //add new message on display
+                        var html = '';
 
-                    html += '<tr>';
-                    html += '<td>';
-                    html += response.messageId;
-                    html += '</td>';
-                    html += '<td>';
-                    html += that.messageDialogUserName;
-                    html += '</td>'
-                    html += '<td>';
-                    html += that.messageDialogEmail;
-                    html += '</td>'
-                    html += '<td>';
-                    html += that.messageDialogHomePage;
-                    html += '</td>'
-                    html += '<td>';
-                    html += that.messageDialogText;
-                    html += '</td>'
-                    html += '</tr>';
+                        html += '<tr>';
+                        html += '<td>';
+                        html += response.messageId;
+                        html += '</td>';
+                        html += '<td>';
+                        html += that.messageDialogUserName;
+                        html += '</td>'
+                        html += '<td>';
+                        html += that.messageDialogEmail;
+                        html += '</td>'
+                        html += '<td>';
+                        html += that.messageDialogHomePage;
+                        html += '</td>'
+                        html += '<td>';
+                        html += that.messageDialogText;
+                        html += '</td>'
+                        html += '</tr>';
 
-                    $('#messageTable tbody tr:first').after(html);
-                    jQuery("#" + that.divId).dialog('close');
-                    that.divId.isLoaded = false;
-                } else {
-                    //delete old errors
-                    $('#userNameError').html();
-                    $('#emailError').html();
-                    $('#homePageError').html();
-                    $('#textError').html();
-                    //show validation errors
-                    $('#userNameError').html(response.validateErrors.userName);
-                    $('#emailError').html(response.validateErrors.email);
-                    $('#homePageError').html(response.validateErrors.homePage);
-                    $('#textError').html(response.validateErrors.text);
+                        $('#messageTable tbody tr:first').after(html);
+                        jQuery("#" + that.divId).dialog('close');
+                        that.divId.isLoaded = false;
+                    } else {
+
+                        //delete old errors
+                        $('#userNameError').html();
+                        $('#emailError').html();
+                        $('#homePageError').html();
+                        $('#textError').html();
+                        //show validation errors
+                        $('#userNameError').html(response.validateErrors.userName);
+                        $('#emailError').html(response.validateErrors.email);
+                        $('#homePageError').html(response.validateErrors.homePage);
+                        $('#textError').html(response.validateErrors.text);
+                    }
                 }
+            });
+        }else{
+            alert(message);
+        }
+    }
+
+    this.validateFileType = function (file) {
+        this.imageType = ['image/jpeg', 'image/bmp', 'image/gif'];
+        var that = this;
+        if (that.inArray(this.imageType, file.files[0].type)) {
+            return true;
+        }
+        return false;
+    }
+
+    this.validateFileMaxSize = function (file) {
+        if (file.files[0].size<1000000) {
+            return true;
+        }
+        return false;
+    }
+
+
+    this.inArray = function(arr, obj) {
+        for(var i=0; i<arr.length; i++) {
+            if (arr[i] == obj) {
+                return true;
             }
-        });
+        }
+        return false;
     }
 }
 

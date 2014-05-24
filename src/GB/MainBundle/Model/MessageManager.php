@@ -55,4 +55,17 @@ class MessageManager
     {
         return new MessageEntityRepository($this->em);
     }
+
+    /**
+     *
+     * find by field
+     *
+     * @string $field
+     *
+     * @return Message
+     */
+    public function findOneByField($field, $value)
+    {
+        return $this->repo->findOneByField($field, $value);
+    }
 }
