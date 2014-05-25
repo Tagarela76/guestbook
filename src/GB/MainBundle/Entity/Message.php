@@ -2,6 +2,7 @@
 
 namespace GB\MainBundle\Entity {
 
+    use Doctrine\Common\Collections\ArrayCollection;
     use Doctrine\ORM\Mapping as ORM;
     use Symfony\Component\Validator\Mapping\ClassMetadata;
     use Symfony\Component\Validator\Constraints as Assert;
@@ -45,6 +46,15 @@ namespace GB\MainBundle\Entity {
          */
         private $creationDate;
 
+        /**
+         * @OneToMany(targetEntity="Image", mappedBy="message")
+         **/
+        private $images;
+        // ...
+
+        public function __construct() {
+            $this->images = new ArrayCollection();
+        }
         /**
          * @param string
          *
@@ -161,6 +171,13 @@ namespace GB\MainBundle\Entity {
             return $date;
         }
 
+        /**
+         * @return ArrayCollection
+         */
+        public function getImages()
+        {
+            return $this->images;
+        }
         static public function loadValidatorMetadata(ClassMetadata $metadata)
         {
             $metadata->addPropertyConstraint('userName', new Assert\NotBlank());

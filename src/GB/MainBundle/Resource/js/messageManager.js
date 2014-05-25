@@ -25,6 +25,7 @@ function MessageDialog()
                 },
                 'Save': function() {
                     that.save();
+                    that.isLoaded = false;
                 },
                 'Preview': function() {
                     that.preview();
@@ -112,35 +113,16 @@ function MessageDialog()
                 dataType: 'json',
                 processData: false, // Don't process the files
                 contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-                success: function (response) {console.log(response);
+                success: function (response) {
                     if (response.messageId != false) {
                         //Saving was successful
                         //add new message on display
                         var html = '';
-
-                        html += '<tr>';
-                        html += '<td>';
-                        html += response.messageId;
-                        html += '</td>';
-                        html += '<td>';
-                        html += that.messageDialogUserName;
-                        html += '</td>'
-                        html += '<td>';
-                        html += that.messageDialogEmail;
-                        html += '</td>'
-                        html += '<td>';
-                        html += that.messageDialogHomePage;
-                        html += '</td>'
-                        html += '<td>';
-                        html += that.messageDialogText;
-                        html += '</td>'
-                        html += '</tr>';
-
+                        html = response.tpl;
                         $('#messageTable tbody tr:first').after(html);
                         jQuery("#" + that.divId).dialog('close');
                         that.divId.isLoaded = false;
                     } else {
-
                         //delete old errors
                         $('#userNameError').html();
                         $('#emailError').html();

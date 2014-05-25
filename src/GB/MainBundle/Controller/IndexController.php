@@ -66,7 +66,7 @@ namespace GB\MainBundle\Controller {
             $app['smarty']->assign('messageArray', $messageArray);
             $app['smarty']->assign('pages', $pages);
             $app['smarty']->assign('currentPage', $currentPage);
-
+            $app['smarty']->assign('path', UPLOADS_PATH);
             if($order == 'ASC'){
                 $app['smarty']->assign('order', 'DESC');
             }else{
@@ -98,7 +98,7 @@ namespace GB\MainBundle\Controller {
         public function saveMessage(Application $app)
         {
             //get ajax request
-            $messageDialogText = $app['request']->get('messageDialogText');
+            $messageDialogText = strip_tags($app['request']->get('messageDialogText'));
             $messageDialogEmail = $app['request']->get('messageDialogEmail');
             $messageDialogHomePage = $app['request']->get('messageDialogHomePage');
             $messageDialogUserName = $app['request']->get('messageDialogUserName');
@@ -115,7 +115,9 @@ namespace GB\MainBundle\Controller {
             $validateErrors = array();
             $responce = array(
                 'messageId' => false,
-                'validateErrors' => false
+                'validateErrors' => false,
+                'creationDate' => false,
+                'tpl' => false
             );
             if (count($errors) > 0) {
                 foreach ($errors as $error) {
@@ -127,6 +129,7 @@ namespace GB\MainBundle\Controller {
                 $manager = new MessageManager($app['db.orm.em']);
                 $messageId = $manager->saveMessage($message);
                 $responce['messageId'] = $messageId;
+                $responce['creationDate'] = $message->getFormatCreationDate();
 
                 //save image
                 $uploaddir = UPLOADS_PATH;
@@ -148,7 +151,26 @@ namespace GB\MainBundle\Controller {
                         mkdir($uploaddir.'messageImage/'.$messageDialogEmail, 0777, true);
                     }
                     move_uploaded_file($file['tmp_name'], $uploaddir .'messageImage/'.$messageDialogEmail.'/'.$fileName);
+                    //image resize
+                    //get image size
+                    list($w_i, $h_i, $type) = getimagesize($uploaddir .'messageImage/'.$messageDialogEmail.'/'.$fileName);
+                    if($w_i>320 || $h_i>240){
+                        $func = 'imagecreatefrom'.$ext;
+                        if($ext =='jpg' || $ext == 'jpeg'){
+                            $img = imagecreatefromjpeg($uploaddir .'messageImage/'.$messageDialogEmail.'/'.$fileName);
+                        }elseif($ext == 'bmp'){
+                            $img = imagecreatefrompng($uploaddir .'messageImage/'.$messageDialogEmail.'/'.$fileName);
+                        }else{
+                            $img = imagecreatefromgif($uploaddir .'messageImage/'.$messageDialogEmail.'/'.$fileName);
+                        }
+                        $img_o = imagecreatetruecolor(320, 240);
+                        imagecopyresampled($img_o, $img, 0, 0, 0, 0, 320, 240, $w_i, $h_i);
+                        //save image
+                        ImageJPEG ($img_o, $uploaddir .'messageImage/'.$messageDialogEmail.'/'.$fileName, 100);
+                    }
                 }
+                $app['smarty']->assign('message', $message);
+                $responce['tpl'] = $app['smarty']->fetch('message.tpl');
             }
 
             return json_encode($responce);

@@ -3,8 +3,8 @@
     <input type='button' value="Send Message" onclick="messageManagerPage.messageDialog.openDialog();">
 </div>
 <div>
-    <table class="table table-condensed" id="messageTable">
-        <tr id="messageTableHead">
+    <table class="table table-bordered message-table" id="messageTable">
+        <tr id="messageTableHead" class="messageTableHead">
             <th>
                 <a href="index.php?page={$currentPage}&sort=id&order={$order}">Id</a>
             </th>
@@ -23,26 +23,41 @@
             <th>
                 <a href="index.php?page={$currentPage}&sort=creationDate&order={$order}">Creation Date</a>
             </th>
+            <th>
+                Images
+            </th>
         <tr>
         {foreach from=$messageArray item=message}
             <tr>
-                <td>
+                <td width="2%";>
                     {$message->getId()}
                 </td>
-                <td>
+                <td width="5%";>
                     {$message->getUserName()}
                 </td>
-                <td>
+                <td width="8%";>
                     {$message->getEmail()}
                 </td>
-                <td>
-                    {$message->getHomePage()}
+                <td width="10%";>
+                    <a href="{$message->getHomePage()}">{$message->getHomePage()}</a>
                 </td>
-                <td>
+                <td width="55%";>
                     {$message->getText()}
                 </td>
-                <td>
+                <td width="10%";>
                     {$message->getFormatCreationDate()}
+                </td>
+                <td width="10%";>
+                    {assign var="imageList" value=$message->getImages()}
+                    <ul>
+                    {foreach from=$imageList item=image}
+                        <li>
+                            <a href="/guestbook/uploads/messageImage/{$message->getEmail()}/{$image->getName()}">
+                                {$image->getRealName()}
+                            </a>
+                        </li>
+                    {/foreach}
+                    </ul>
                 </td>
             </tr>
         {/foreach}

@@ -77,5 +77,21 @@ namespace GB\MainBundle\Entity {
         {
             return $this->id;
         }
+
+        /**
+         * @return string
+         */
+        public function getName()
+        {
+            return $this->name;
+        }
+
+        /**
+         * @return string
+         */
+        public function getRealName()
+        {
+            return $this->realName;
+        }
     }
 }

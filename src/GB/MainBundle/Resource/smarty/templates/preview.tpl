@@ -7,7 +7,7 @@
 <table>
     <tr>
         <td>
-            User Name
+            User Name:
         </td>
         <td>
             {$messageDialogUserName}
@@ -15,7 +15,7 @@
     </tr>
     <tr>
         <td>
-            User Email
+            User Email:
         </td>
         <td>
             {$messageDialogEmail}
@@ -23,7 +23,7 @@
     </tr>
     <tr>
         <td>
-           HomePage
+           Home Page:
         </td>
         <td>
             {$messageDialogHomePage}
@@ -31,7 +31,7 @@
     </tr>
     <tr>
         <td>
-            Text
+            Text:
         </td>
         <td>
             {$messageDialogText}
