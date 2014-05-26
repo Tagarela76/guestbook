@@ -9,7 +9,7 @@ sudo php composer.phar update<br>
 4) Создать бд guestbook<br>
 5) В терминале проекта ввести команду<br>
 bin/console orm:schema-tool:update --force<br>
-папка bin должна иметь права 777
+папка bin должна иметь права 777<br>
 6) Создать папки и установить права на запись<br>
 /uploads<br>
 /src/GB/MainBundle/Resource/smarty/template_c<br>
